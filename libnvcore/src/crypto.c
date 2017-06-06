@@ -174,15 +174,15 @@ void krypt_add_passport(krypt_t *kconn, passport_t *passport)
 
 void krypt_set_renegotiate(krypt_t *kconn)
 {
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
 	if (kconn->conn_type == KRYPT_SERVER) {
 		kconn->status = KRYPT_HANDSHAKE;
 		// bring back the connection to handshake mode
-#if OPENSSL_VERSION_NUMBER < 0x10100000L
 		kconn->ssl->state = SSL_ST_ACCEPT;
-#else
-		SSL_renegotiate(kconn->ssl);
-#endif
 	}
+#else
+	SSL_renegotiate(kconn->ssl);
+#endif
 }
 
 void krypt_print_cipher(krypt_t *kconn)
