@@ -210,7 +210,7 @@ int krypt_do_handshake(krypt_t *kconn, uint8_t *buf, size_t buf_data_size)
 		SSL_ERROR_WANT_ASYNC_JOB,
 		SSL_ERROR_SYSCALL,
 		SSL_ERROR_SSL
-	)
+	);
 
 	//SSL_peek(kconn->ssl, buf, 0);
 	ret = SSL_do_handshake(kconn->ssl);
