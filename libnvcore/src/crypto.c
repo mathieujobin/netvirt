@@ -214,6 +214,9 @@ int krypt_do_handshake(krypt_t *kconn, uint8_t *buf, size_t buf_data_size)
 	);
 
 	//SSL_peek(kconn->ssl, buf, 0);
+	// Level 0 Everything is permitted. This retains compatibility with previous versions of OpenSSL.
+	// https://www.openssl.org/docs/manmaster/man3/SSL_CTX_set_security_level.html
+	SSL_CTX_set_security_level(kconn->ssl, 0)
 	ret = SSL_do_handshake(kconn->ssl);
 	jlog(L_NOTICE, "(first handshake) SSL state: %s, return %d", SSL_state_string_long(kconn->ssl), ret);
 	jlog(L_NOTICE, "SSL_get_error(%d) => %d", ret, SSL_get_error(kconn->ssl, ret));
