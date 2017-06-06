@@ -127,8 +127,6 @@ static int krypt_set_adh(krypt_t *kconn)
 	SSL_set_tmp_dh(kconn->ssl, dh);
 	DH_free(dh);
 	SSL_set_tmp_dh_callback(kconn->ssl, tmp_dh_callback);
-#else
-	SSL_CTX_set_dh_auto(kconn->ctx, 1);
 #endif
 
 	SSL_set_verify(kconn->ssl, SSL_VERIFY_NONE, NULL);
@@ -352,6 +350,9 @@ int krypt_secure_connection(krypt_t *kconn, uint8_t protocol, uint8_t conn_type,
 
 	// Create the SSL object
 	kconn->ssl = SSL_new(kconn->ctx);
+#if OPENSSL_VERSION_NUMBER >= 0x10100000L
+	SSL_CTX_set_dh_auto(kconn->ctx, 1);
+#endif
 
 	if (security_level == KRYPT_ADH)
 		krypt_set_adh(kconn);
