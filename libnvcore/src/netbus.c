@@ -617,12 +617,14 @@ netc_t *net_client(const char *listen_addr,
 
 		// FIXME net and krypt should share constants
 		int krypt_security_level;
-		if (netc->security_level == NET_SECURE_ADH)
+		if (netc->security_level == NET_SECURE_ADH) {
 			krypt_security_level = KRYPT_ADH;
-		else
+			jlog(L_NOTICE, "Calling krypt_secure_connection() with KRYPT_ADH");
+		} else {
 			krypt_security_level = KRYPT_RSA;
+			jlog(L_NOTICE, "Calling krypt_secure_connection() with KRYPT_RSA");
+		}
 
-		jlog(L_NOTICE, "Calling krypt_secure_connection()");
 		ret = krypt_secure_connection(netc->kconn, KRYPT_TLS, KRYPT_CLIENT, krypt_security_level);
 		if (ret < 0) {
 			jlog(L_NOTICE, "securing client connection failed");
