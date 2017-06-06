@@ -180,7 +180,7 @@ void krypt_set_renegotiate(krypt_t *kconn)
 #if OPENSSL_VERSION_NUMBER < 0x10100000L
 		kconn->ssl->state = SSL_ST_ACCEPT;
 #else
-		SSL_set_accept_state(kconn->ssl);
+		SSL_renegotiate(kconn->ssl);
 #endif
 	}
 }
