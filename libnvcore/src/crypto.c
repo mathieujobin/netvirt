@@ -358,12 +358,13 @@ int krypt_secure_connection(krypt_t *kconn, uint8_t protocol, uint8_t conn_type,
 
 	// Create the SSL object
 	kconn->ssl = SSL_new(kconn->ctx);
-#if OPENSSL_VERSION_NUMBER >= 0x10100000L
-	SSL_CTX_set_dh_auto(kconn->ctx, 1);
-#endif
 
 	if (security_level == KRYPT_ADH)
 		krypt_set_adh(kconn);
+
+#if OPENSSL_VERSION_NUMBER >= 0x10100000L
+	SSL_CTX_set_dh_auto(kconn->ctx, 1);
+#endif
 
 	SSL_set_bio(kconn->ssl, kconn->internal_bio, kconn->internal_bio);
 	SSL_set_mode(kconn->ssl, SSL_MODE_AUTO_RETRY);
