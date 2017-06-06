@@ -217,16 +217,20 @@ int krypt_do_handshake(krypt_t *kconn, uint8_t *buf, size_t buf_data_size)
 	ret = SSL_do_handshake(kconn->ssl);
 	jlog(L_NOTICE, "(first handshake) SSL state: %s, return %d", SSL_state_string_long(kconn->ssl), ret);
 	jlog(L_NOTICE, "SSL_get_error(%d) => %d", ret, SSL_get_error(kconn->ssl, ret));
+	ssl_error_stack();
 	SSL_set_verify(kconn->ssl, SSL_VERIFY_NONE, NULL);
 	ret = SSL_do_handshake(kconn->ssl);
 	jlog(L_NOTICE, "(2nd handshake) SSL state: %s, return %d", SSL_state_string_long(kconn->ssl), ret);
 	jlog(L_NOTICE, "SSL_get_error(%d) => %d", ret, SSL_get_error(kconn->ssl, ret));
+	ssl_error_stack();
 	ret = SSL_renegotiate(kconn->ssl);
 	jlog(L_NOTICE, "(renegotiation) SSL state: %s, return %d", SSL_state_string_long(kconn->ssl), ret);
 	jlog(L_NOTICE, "SSL_get_error(%d) => %d", ret, SSL_get_error(kconn->ssl, ret));
+	ssl_error_stack();
 	ret = SSL_do_handshake(kconn->ssl);
 	jlog(L_NOTICE, "(3rd handshake) SSL state: %s, return %d", SSL_state_string_long(kconn->ssl), ret);
 	jlog(L_NOTICE, "SSL_get_error(%d) => %d", ret, SSL_get_error(kconn->ssl, ret));
+	ssl_error_stack();
 
 	init_finished = SSL_is_init_finished(kconn->ssl);
 	jlog(L_NOTICE, "SSL_is_init_finished() => %d", init_finished);
@@ -245,7 +249,7 @@ int krypt_do_handshake(krypt_t *kconn, uint8_t *buf, size_t buf_data_size)
 	else {
 		// Error
 		kconn->status = KRYPT_FAIL;
-		jlog(L_ERROR, "ssl_get_error: %d\n", SSL_get_error(kconn->ssl, ret));
+		jlog(L_ERROR, "ssl_get_error: %d", SSL_get_error(kconn->ssl, ret));
 		ssl_error_stack();
 		jlog(L_ERROR, "handshake error");
 		status = -1;
