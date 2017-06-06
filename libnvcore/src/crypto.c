@@ -199,7 +199,7 @@ int krypt_do_handshake(krypt_t *kconn, uint8_t *buf, size_t buf_data_size)
 	if (buf != NULL && buf_data_size > 0) {
 		nbyte = BIO_write(kconn->network_bio, buf, buf_data_size);
 	}
-
+/*
 	if(SSL_renegotiate(kconn->ssl) <= 0){
 		printf("SSL_renegotiate() failed\n");
 	}
@@ -207,10 +207,10 @@ int krypt_do_handshake(krypt_t *kconn, uint8_t *buf, size_t buf_data_size)
 
 	SSL_peek(kconn->ssl, buf, 0);
 	jlog(L_NOTICE, "SSL renegotiation: %s", SSL_state_string_long(kconn->ssl));
-
+*/
 	ret = SSL_do_handshake(kconn->ssl);
 	if(ret <= 0){
-		printf("SSL_do_handshake() failed\n");
+		printf("SSL_do_handshake() failed %d\n", ret);
 	}
 	jlog(L_NOTICE, "SSL state: %s", SSL_state_string_long(kconn->ssl));
 
