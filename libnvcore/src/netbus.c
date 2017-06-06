@@ -458,6 +458,8 @@ static void net_on_connect(peer_t *peer)
 
 		new_netc->kconn->passport = netc->kconn->passport;
 
+		//printf("Calling krypt_secure_connection() from netbus.c#L462\n");
+		jlog(L_NOTICE, "Calling krypt_secure_connection()");
 		krypt_secure_connection(new_netc->kconn, KRYPT_TLS, KRYPT_SERVER, krypt_security_level);
 	}
 
@@ -620,6 +622,7 @@ netc_t *net_client(const char *listen_addr,
 		else
 			krypt_security_level = KRYPT_RSA;
 
+		jlog(L_NOTICE, "Calling krypt_secure_connection()");
 		ret = krypt_secure_connection(netc->kconn, KRYPT_TLS, KRYPT_CLIENT, krypt_security_level);
 		if (ret < 0) {
 			jlog(L_NOTICE, "securing client connection failed");
@@ -716,6 +719,7 @@ void net_p2p_on_connect(peer_t *peer)
 			kconn_type = KRYPT_SERVER;
 		}
 
+		jlog(L_NOTICE, "Calling krypt_secure_connection()");
 		ret = krypt_secure_connection(netc->kconn, KRYPT_TLS, kconn_type, KRYPT_RSA);
 		if (ret < 0) {
 			jlog(L_NOTICE, "securing client connection failed");
