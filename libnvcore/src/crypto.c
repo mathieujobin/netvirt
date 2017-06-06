@@ -203,12 +203,16 @@ int krypt_do_handshake(krypt_t *kconn, uint8_t *buf, size_t buf_data_size)
 	//SSL_peek(kconn->ssl, buf, 0);
 	ret = SSL_do_handshake(kconn->ssl);
 	jlog(L_NOTICE, "(first handshake) SSL state: %s, return %d", SSL_state_string_long(kconn->ssl), ret);
+	jlog(L_NOTICE, "SSL_get_error(%d) => %d", ret, SSL_get_error(kconn->ssl, ret));
 	ret = SSL_do_handshake(kconn->ssl);
 	jlog(L_NOTICE, "(2nd handshake) SSL state: %s, return %d", SSL_state_string_long(kconn->ssl), ret);
+	jlog(L_NOTICE, "SSL_get_error(%d) => %d", ret, SSL_get_error(kconn->ssl, ret));
 	ret = SSL_renegotiate(kconn->ssl);
 	jlog(L_NOTICE, "(renegotiation) SSL state: %s, return %d", SSL_state_string_long(kconn->ssl), ret);
+	jlog(L_NOTICE, "SSL_get_error(%d) => %d", ret, SSL_get_error(kconn->ssl, ret));
 	ret = SSL_do_handshake(kconn->ssl);
 	jlog(L_NOTICE, "(3rd handshake) SSL state: %s, return %d", SSL_state_string_long(kconn->ssl), ret);
+	jlog(L_NOTICE, "SSL_get_error(%d) => %d", ret, SSL_get_error(kconn->ssl, ret));
 
 	if (ret > 0 && !SSL_is_init_finished(kconn->ssl)) {
 		// Need more data to continue ?
