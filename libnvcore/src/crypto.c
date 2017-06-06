@@ -200,6 +200,18 @@ int krypt_do_handshake(krypt_t *kconn, uint8_t *buf, size_t buf_data_size)
 		nbyte = BIO_write(kconn->network_bio, buf, buf_data_size);
 	}
 
+	jlog(L_NOTICE, "Possible errors: %d %d %d %d %d %d %d %d %d %d %d",
+		SSL_ERROR_NONE,
+		SSL_ERROR_ZERO_RETURN,
+		SSL_ERROR_WANT_READ, SSL_ERROR_WANT_WRITE,
+		SSL_ERROR_WANT_CONNECT, SSL_ERROR_WANT_ACCEPT,
+		SSL_ERROR_WANT_X509_LOOKUP,
+		SSL_ERROR_WANT_ASYNC,
+		SSL_ERROR_WANT_ASYNC_JOB,
+		SSL_ERROR_SYSCALL,
+		SSL_ERROR_SSL
+	)
+
 	//SSL_peek(kconn->ssl, buf, 0);
 	ret = SSL_do_handshake(kconn->ssl);
 	jlog(L_NOTICE, "(first handshake) SSL state: %s, return %d", SSL_state_string_long(kconn->ssl), ret);
