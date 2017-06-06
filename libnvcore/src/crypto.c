@@ -195,6 +195,7 @@ int krypt_do_handshake(krypt_t *kconn, uint8_t *buf, size_t buf_data_size)
 	int ret = 0;
 	int nbyte = 0;
 	int status = -1;
+	int init_finished = 0;
 
 	if (buf != NULL && buf_data_size > 0) {
 		nbyte = BIO_write(kconn->network_bio, buf, buf_data_size);
@@ -227,28 +228,27 @@ int krypt_do_handshake(krypt_t *kconn, uint8_t *buf, size_t buf_data_size)
 	jlog(L_NOTICE, "(3rd handshake) SSL state: %s, return %d", SSL_state_string_long(kconn->ssl), ret);
 	jlog(L_NOTICE, "SSL_get_error(%d) => %d", ret, SSL_get_error(kconn->ssl, ret));
 
-	if (ret > 0 && !SSL_is_init_finished(kconn->ssl)) {
+	init_finished = SSL_is_init_finished(kconn->ssl);
+	jlog(L_NOTICE, "SSL_is_init_finished() => %d", init_finished);
+
+	if (ret > 0 && !init_finished) {
 		// Need more data to continue ?
 		jlog(L_ERROR, "handshake need more data to continue ??");
 		status = 1;
 	}
-	else if (ret > 0 && SSL_is_init_finished(kconn->ssl)) {
+	else if (ret > 0 && init_finished) {
 		// Handshake successfully completed
 		post_handshake_check(kconn);
 		kconn->status = KRYPT_SECURE;
 		status = 0;
 	}
-	else if (ret == 0) {
+	else {
 		// Error
 		kconn->status = KRYPT_FAIL;
 		jlog(L_ERROR, "ssl_get_error: %d\n", SSL_get_error(kconn->ssl, ret));
 		ssl_error_stack();
 		jlog(L_ERROR, "handshake error");
 		status = -1;
-	}
-	else if (ret < 0) {
-		// Need more data to continue
-		status = 1;
 	}
 
 	nbyte = BIO_ctrl_pending(kconn->network_bio);
