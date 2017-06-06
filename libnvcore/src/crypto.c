@@ -32,6 +32,7 @@
 
 static int s_server_auth_session_id_context = 2;
 
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
 static DH *get_dh_1024() {
 
 	static unsigned char dh1024_p[]={
@@ -61,14 +62,13 @@ static DH *get_dh_1024() {
 
 	dh->p = BN_bin2bn(dh1024_p, sizeof(dh1024_p), NULL);
 	dh->g = BN_bin2bn(dh1024_g, sizeof(dh1024_g), NULL);
-
 	if (dh->p == NULL || dh->g == NULL) {
 		DH_free(dh);
 		return NULL;
 	}
-
 	return dh;
 }
+#endif
 
 // FIXME - could we remove this function?
 static DH *tmp_dh_callback(SSL *s, int is_export, int keylength)
@@ -122,11 +122,15 @@ static int verify_callback(int ok, X509_STORE_CTX *store)
 static int krypt_set_adh(krypt_t *kconn)
 {
 	SSL_set_cipher_list(kconn->ssl, "ADH");
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
 	DH *dh = get_dh_1024();
 	SSL_set_tmp_dh(kconn->ssl, dh);
 	DH_free(dh);
-
 	SSL_set_tmp_dh_callback(kconn->ssl, tmp_dh_callback);
+#else
+	SSL_CTX_set_dh_auto(kconn->ctx, 1);
+#endif
+
 	SSL_set_verify(kconn->ssl, SSL_VERIFY_NONE, NULL);
 
 	return 0;
@@ -173,10 +177,13 @@ void krypt_add_passport(krypt_t *kconn, passport_t *passport)
 void krypt_set_renegotiate(krypt_t *kconn)
 {
 	if (kconn->conn_type == KRYPT_SERVER) {
-
 		kconn->status = KRYPT_HANDSHAKE;
 		// bring back the connection to handshake mode
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
 		kconn->ssl->state = SSL_ST_ACCEPT;
+#else
+		SSL_set_accept_state(kconn->ssl);
+#endif
 	}
 }
 
