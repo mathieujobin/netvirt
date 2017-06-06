@@ -218,6 +218,7 @@ int krypt_do_handshake(krypt_t *kconn, uint8_t *buf, size_t buf_data_size)
 	jlog(L_NOTICE, "SSL_get_error(%d) => %d", ret, SSL_get_error(kconn->ssl, ret));
 	ssl_error_stack();
 
+	/*
 	SSL_peek(kconn->ssl, buf, 0);
 
 	ret = SSL_do_handshake(kconn->ssl);
@@ -234,7 +235,7 @@ int krypt_do_handshake(krypt_t *kconn, uint8_t *buf, size_t buf_data_size)
 	jlog(L_NOTICE, "(3rd handshake) SSL state: %s, return %d", SSL_state_string_long(kconn->ssl), ret);
 	jlog(L_NOTICE, "SSL_get_error(%d) => %d", ret, SSL_get_error(kconn->ssl, ret));
 	ssl_error_stack();
-
+*/
 	init_finished = SSL_is_init_finished(kconn->ssl);
 	jlog(L_NOTICE, "SSL_is_init_finished() => %d", init_finished);
 
