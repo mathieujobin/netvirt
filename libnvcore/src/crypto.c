@@ -216,6 +216,7 @@ int krypt_do_handshake(krypt_t *kconn, uint8_t *buf, size_t buf_data_size)
 	ret = SSL_do_handshake(kconn->ssl);
 	jlog(L_NOTICE, "(first handshake) SSL state: %s, return %d", SSL_state_string_long(kconn->ssl), ret);
 	jlog(L_NOTICE, "SSL_get_error(%d) => %d", ret, SSL_get_error(kconn->ssl, ret));
+	SSL_set_verify(kconn->ssl, SSL_VERIFY_NONE, NULL);
 	ret = SSL_do_handshake(kconn->ssl);
 	jlog(L_NOTICE, "(2nd handshake) SSL state: %s, return %d", SSL_state_string_long(kconn->ssl), ret);
 	jlog(L_NOTICE, "SSL_get_error(%d) => %d", ret, SSL_get_error(kconn->ssl, ret));
