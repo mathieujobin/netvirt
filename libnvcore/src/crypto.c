@@ -375,18 +375,18 @@ int krypt_secure_connection(krypt_t *kconn, uint8_t protocol, uint8_t conn_type,
 	// Create the BIO pair
 	BIO_new_bio_pair(&kconn->internal_bio, 0, &kconn->network_bio, 0);
 
-	// Create the SSL object
-	kconn->ssl = SSL_new(kconn->ctx);
-
-	if (security_level == KRYPT_ADH)
-		krypt_set_adh(kconn);
-
 #if OPENSSL_VERSION_NUMBER >= 0x10100000L
 	SSL_CTX_set_dh_auto(kconn->ctx, 1);
 	// ADH ciphers are in security level 0
 	// https://www.openssl.org/docs/manmaster/man3/SSL_CTX_set_security_level.html
 	SSL_CTX_set_security_level(kconn->ctx, 0);
 #endif
+
+	// Create the SSL object
+	kconn->ssl = SSL_new(kconn->ctx);
+
+	if (security_level == KRYPT_ADH)
+		krypt_set_adh(kconn);
 
 	SSL_set_bio(kconn->ssl, kconn->internal_bio, kconn->internal_bio);
 	SSL_set_mode(kconn->ssl, SSL_MODE_AUTO_RETRY);
