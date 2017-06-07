@@ -362,7 +362,21 @@ int krypt_secure_connection(krypt_t *kconn, uint8_t protocol, uint8_t conn_type,
 	switch (protocol) {
 
 		case KRYPT_TLS:
-			kconn->ctx = SSL_CTX_new(TLSv1_method());
+			switch (conn_type) {
+			case KRYPT_SERVER:
+				jlog(L_NOTICE, "using TLS_server_method");
+				kconn->ctx = SSL_CTX_new(TLS_server_method());
+				break;
+
+			case KRYPT_CLIENT:
+				jlog(L_NOTICE, "using TLS_client_method");
+				kconn->ctx = SSL_CTX_new(TLS_client_method());
+				break;
+
+			default:
+				jlog(L_ERROR, "unknown connection type");
+				return -1;
+			}
 			break;
 
 		default:
