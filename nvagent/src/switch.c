@@ -99,7 +99,6 @@ struct packets {
 	TAILQ_ENTRY(packets)	 entries;
 };
 
-struct event_base		*ev_base;
 static struct event		*ev_iface = NULL;
 static struct network		*netcf;
 static struct vlink		*vlink = NULL;
